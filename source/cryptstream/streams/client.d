@@ -1,8 +1,9 @@
 module cryptstream.streams.client;
 
+import river.core : RiverStream = Stream, StreamException, StreamError;
+import core.thread : Thread;
 import botan.tls.client;
 
-import river.core : RiverStream = Stream, StreamException, StreamError;
 
 // TODO: This should be a kind-of `RiverStream`, but
 // ... we defs can take IN a stream to use as the underlying
@@ -13,6 +14,12 @@ public class CryptClient : RiverStream
      * Underlying stream to use for TLS-encrypted communication
      */
     private RiverStream stream;
+
+    /** 
+     * Reads bytes from the underlying thread to pass
+     * up to `receivedData()`
+     */
+    private Thread streamReader;
     
     /** 
      * Botan TLS client
@@ -31,6 +38,30 @@ public class CryptClient : RiverStream
         this.botanClient = new TLSClient(&tlsOutputHandler);
 
         // TODO: Insert code to init using botan OVER `stream`
+
+        // TODO: Start a thread which can read from the socket
+        // ... and then injct data to the Botan client to be decrypted
+        // ... using `receivedData()`
+        this.streamReader = new Thread(&streamReaderWorker);
+        this.streamReader.start();
+
+        // TODO: Add method which is passed to the BotanClient constructor
+        // ... above which is called upon decrypting a tls record
+        // ... then place this into a buffer here which our
+        // ... `read/readFully` can read from
+    }
+
+    private void streamReaderWorker()
+    {
+        // TODO: Make this size configurable
+        byte[100] readInto;
+        while(true)
+        {
+            ulong receivedAmount = stream.read(readInto);
+
+            // TODO: Use the hint byte count returned?
+            botanClient.receivedData(cast(ubyte*)readInto.ptr, receivedAmount);
+        }
     }
 
     // NOTE This gets called when the Botan client needs to write to
