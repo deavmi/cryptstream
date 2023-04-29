@@ -33,9 +33,14 @@ public class CryptClient : RiverStream
         // TODO: Insert code to init using botan OVER `stream`
     }
 
+    // NOTE This gets called when the Botan client needs to write to
+    // ... the underlying output. So If we were to call `botanClient.send`
+    // ... (which takes in our plaintext), it would encrypt, and then
+    // ... push the encrypted payload into this method here below
+    // ... (implying we should write to our underlying stream here)
     private void tlsOutputHandler(in ubyte[] dataOut)
     {
-
+        stream.writeFully(cast(byte[])dataOut);
     }
 
     
