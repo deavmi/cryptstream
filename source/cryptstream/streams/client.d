@@ -43,7 +43,7 @@ public class CryptClient : RiverStream
     {
         /* Ensure the TLS session is active */
         openCheck();
-        
+
         // TODO: Implement me
         return 0;
     }
@@ -64,7 +64,8 @@ public class CryptClient : RiverStream
 
         // TODO: Implement me
 
-        // botanClient.send()
+        /* Send data to Botan */
+        botanClient.send(cast(ubyte*)fromArray.ptr, fromArray.length);
 
         return 0;
     }
@@ -76,7 +77,11 @@ public class CryptClient : RiverStream
         openCheck();
 
         // TODO: Implement me
-        return 0;
+
+        // FIXME: Change this (if required), for now I am just going to call write
+        return write(fromArray);
+
+        // return 0;
     }
 
     public override void close()
