@@ -15,3 +15,4 @@ cryptstream-test-*
 *.obj
 *.lst
 dub.selections.json
+libcryptstream.a
