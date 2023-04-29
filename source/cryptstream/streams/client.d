@@ -41,12 +41,18 @@ public class CryptClient : RiverStream
     
     public override ulong read(byte[] toArray)
     {
+        /* Ensure the TLS session is active */
+        openCheck();
+        
         // TODO: Implement me
         return 0;
     }
 
     public override ulong readFully(byte[] toArray)
     {
+        /* Ensure the TLS session is active */
+        openCheck();
+
         // TODO: Implement me
         return 0;
     }
@@ -55,7 +61,7 @@ public class CryptClient : RiverStream
     {
         /* Ensure the TLS session is active */
         openCheck();
-        
+
         // TODO: Implement me
 
         // botanClient.send()
@@ -66,6 +72,9 @@ public class CryptClient : RiverStream
     
     public override ulong writeFully(byte[] fromArray)
     {
+        /* Ensure the TLS session is active */
+        openCheck();
+
         // TODO: Implement me
         return 0;
     }
