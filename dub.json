@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"Tristan B. Velloza Kildaire"
+	],
+	"copyright": "Copyright © 2023, Tristan B. Velloza Kildaire",
+	"dependencies": {
+		"river": "~>0.3.5"
+	},
+	"description": "A minimal D application.",
+	"license": "LGPL 2",
+	"name": "cryptstream"
+}

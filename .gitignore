@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/cryptstream
+cryptstream.so
+cryptstream.dylib
+cryptstream.dll
+cryptstream.a
+cryptstream.lib
+cryptstream-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
