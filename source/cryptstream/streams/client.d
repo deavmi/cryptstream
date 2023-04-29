@@ -55,6 +55,9 @@ public class CryptClient : RiverStream
 
         // TODO: Insert code to init using botan OVER `stream`
 
+        this.plainTextReceivedLock = new Mutex();
+
+
         // TODO: Start a thread which can read from the socket
         // ... and then injct data to the Botan client to be decrypted
         // ... using `receivedData()`
@@ -96,11 +99,23 @@ public class CryptClient : RiverStream
         return true;
     }
 
+    private byte[] plainTextReceived;
+    import core.sync.mutex : Mutex;
+    private Mutex plainTextReceivedLock;
     private void decryptedInputHandler(in ubyte[] receivedDecryptedData)
     {
         // TODO: This is now decrypted and THIS data should be placed
         // ... into a buffer in CryptClient that can be read from
         // ... via `read/readFully`
+
+        // FIXME: Add a libsnooze wakeup method which will wake up
+        // ... sleeper in the RiverStream `read` method
+
+        /* Add the received bytes */
+        plainTextReceivedLock.lock();
+        plainTextReceived ~= receivedDecryptedData;
+        plainTextReceivedLock.unlock();
+
     }
 
     private void tlsAlertHandler(in TLSAlert alert, in ubyte[] data)
@@ -119,10 +134,33 @@ public class CryptClient : RiverStream
     }
 
     
+
+    /**
+     * Below are all our RiverStream API methods which are
+     * just for extracting plaintext data (TLS-decrypted)
+     * and pushing in plaintext data (to-be TLS-encrypted)
+     */
+
+    /** 
+     * Reads decrypted data from the stream. Will read up
+     * to the number of bytes equal to the size of the array.
+     *
+     * Params:
+     *   toArray = the data read
+     * Returns: the number of bytes read
+     */
     public override ulong read(byte[] toArray)
     {
         /* Ensure the TLS session is active */
         openCheck();
+
+        // FIXME: Have a wake method here (using libsnooze)
+        // ... to know when to wake up when there are enough bytes
+        // ... available to satisfy the requested amount
+
+        plainTextReceivedLock.lock();
+        plainTextReceived; // TODO: Chomp here
+        plainTextReceivedLock.unlock();
 
         // TODO: Implement me
         return 0;
@@ -199,10 +237,12 @@ unittest
     /** 
      * Setup a server
      */
-    Address addr = parseAddress("::1", 1214);
-    writeln("Binding server to: ", addr);
-    Server server = new Server(addr);
-    server.start();
+    // Address addr = parseAddress("::1", 1042);
+    // writeln("Binding server to: ", addr);
+    // Server server = new Server(addr);
+    // server.start();
+
+    Address addr = getAddress("deavmi.assigned.network", 443)[0];
 
 
     Socket endpoint = new Socket(AddressFamily.INET6, SocketType.STREAM, ProtocolType.TCP);
