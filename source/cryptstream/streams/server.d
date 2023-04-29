@@ -15,7 +15,8 @@ public class CryptServerHandle
     // TODO: Setup
     private TLSSessionManager sessionManager = new  TLSSessionManagerNoop();
     private TLSCredentialsManager credentialManager;
-    private TLSPolicy policy = new TLSPolicy();
+    import cryptstream.streams.testingPolicy;
+    private TLSPolicy policy = new TestingPolicy();
     private RandomNumberGenerator rng;
 
     /** 
@@ -31,6 +32,8 @@ public class CryptServerHandle
         writeln("HOL");
 
         this.rng = RandomNumberGenerator.makeRng();
+        // this.sessionManager = new  TLSSessionManagerInMemory(rng);
+
         import cryptstream.streams.credmanager : CredManager;
         this.credentialManager = new CredManager();
         this.clientSocket = clientSocket;
@@ -78,6 +81,9 @@ public class CryptServerHandle
     private bool tlsHandshakeHandler(in TLSSession session)
     {
         // TODO: Implement me
+        import std.stdio;
+        writeln("tlsHandshakeHandler(server-side) Hello handshake came in?");
+
         return true;
     }
 

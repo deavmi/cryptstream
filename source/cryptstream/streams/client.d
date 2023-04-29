@@ -29,7 +29,9 @@ public class CryptClient : RiverStream
     // TODO: Setup
     private TLSSessionManager sessionManager = new  TLSSessionManagerNoop();
     private TLSCredentialsManager credentialManager;
-    private TLSPolicy policy = new TLSPolicy();
+
+    import cryptstream.streams.testingPolicy;
+    private TLSPolicy policy = new TestingPolicy();
     private RandomNumberGenerator rng;
 
     /** 
@@ -42,6 +44,7 @@ public class CryptClient : RiverStream
         this.stream = stream;
 
         this.rng = RandomNumberGenerator.makeRng();
+        // this.sessionManager = new  TLSSessionManagerInMemory(rng);
 
         import cryptstream.streams.credmanager : CredManager;
         this.credentialManager = new CredManager();
@@ -196,7 +199,7 @@ unittest
     /** 
      * Setup a server
      */
-    Address addr = parseAddress("::1", 7057);
+    Address addr = parseAddress("::1", 1214);
     writeln("Binding server to: ", addr);
     Server server = new Server(addr);
     server.start();
@@ -211,6 +214,8 @@ unittest
     CryptClient client = new CryptClient(stream);
 
     Thread.sleep(dur!("seconds")(3));
+
+    // FIXME: This crashes as handshake doens't go through meaning the `isActive()` is false
     client.writeFully(cast(byte[])"ABBA");
     
 
