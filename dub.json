@@ -4,8 +4,8 @@
 	],
 	"copyright": "Copyright © 2023, Tristan B. Velloza Kildaire",
 	"dependencies": {
-		"botan": "~>1.13.4",
-		"river": "~>0.3.5"
+		"botan": ">=1.13.4",
+		"river": ">=0.3.5"
 	},
 	"description": "A minimal D application.",
 	"license": "LGPL 2",
